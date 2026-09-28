@@ -9,13 +9,34 @@ if (empty($_SESSION["csrf"])) {
 $flash = $_SESSION["flash"] ?? "";
 unset($_SESSION["flash"]);
 
-$stmt = $pdo->prepare("SELECT * FROM products ORDER BY id DESC");
-$stmt->execute();
-$products = $stmt->fetchAll();
-
 function e($text) {
     return htmlspecialchars((string)$text, ENT_QUOTES, "UTF-8");
 }
+
+// Parameter GET
+$q   = trim($_GET["q"] ?? "");
+$cat = trim($_GET["category"] ?? "");
+
+// Query produk (search + filter) dengan prepared statement
+$sql = "SELECT * FROM products WHERE (name LIKE :q1 OR category LIKE :q2)";
+$params = ["q1" => "%$q%", "q2" => "%$q%"];
+
+if ($cat !== "") {
+    $sql .= " AND category = :cat";
+    $params["cat"] = $cat;
+}
+$sql .= " ORDER BY id DESC";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+$products = $stmt->fetchAll();
+
+// Daftar kategori untuk dropdown
+$stmt = $pdo->prepare("SELECT DISTINCT category FROM products ORDER BY category");
+$stmt->execute();
+$categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+$isFiltering = ($q !== "" || $cat !== "");
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -34,6 +55,23 @@ function e($text) {
         <?php endif; ?>
 
         <a class="btn" href="create.php">+ Tambah Produk</a>
+
+        <form method="GET" class="search-form">
+            <input type="text" name="q" placeholder="Cari nama atau kategori..."
+                   value="<?= e($q) ?>">
+            <select name="category">
+                <option value="">Semua kategori</option>
+                <?php foreach ($categories as $c): ?>
+                    <option value="<?= e($c) ?>" <?= $c === $cat ? "selected" : "" ?>>
+                        <?= e($c) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <button type="submit" class="btn">Cari</button>
+            <?php if ($isFiltering): ?>
+                <a href="index.php" class="reset">Reset</a>
+            <?php endif; ?>
+        </form>
 
         <div class="products">
             <?php foreach ($products as $product): ?>
@@ -56,7 +94,7 @@ function e($text) {
         </div>
 
         <?php if (!$products): ?>
-            <p>Belum ada produk.</p>
+            <p><?= $isFiltering ? "Tidak ada produk yang cocok." : "Belum ada produk." ?></p>
         <?php endif; ?>
     </div>
 </body>

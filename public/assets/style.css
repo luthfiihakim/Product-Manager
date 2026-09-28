@@ -25,3 +25,9 @@ body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; color: #1
 .form input { padding: 8px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 14px; }
 .form button { padding: 10px; background: #2b6cb0; color: #fff; border: none;
                border-radius: 6px; cursor: pointer; font-size: 14px; }
+
+               .search-form { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; align-items: center; }
+.search-form input[type="text"] { flex: 1 1 200px; padding: 8px; border: 1px solid #cbd5e0;
+                                  border-radius: 6px; font-size: 14px; }
+.search-form select { padding: 8px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 14px; }
+.reset { color: #6b7280; font-size: 14px; }

@@ -10,6 +10,7 @@ Aplikasi manajemen produk berbasis PHP dan MySQL (PDO) untuk Praktikum 3 Pemrogr
 - Delete: hapus produk lewat POST dengan token CSRF
 - Validasi: nama minimal 3 karakter, harga lebih dari 0, stok 0 atau lebih, nama produk unik
 - Pola PRG: redirect setelah create, update, dan delete agar refresh tidak menggandakan data
+- Bonus: pencarian (nama/kategori) dan filter kategori memakai parameter GET
 
 ## Keamanan
 
